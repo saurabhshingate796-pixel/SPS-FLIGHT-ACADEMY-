@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPS Flight Academy | Lite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #0a0a0f; color: #fff; overflow: hidden; }
+        #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.login-box { background: rgba(26, 26, 46, 0.95); border: 1px solid #00ffff; border-radius: 20px; padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 0 40px rgba(0, 255, 255, 0.3); text-align: center; }
+.login-box h1 { color: #00ffff; font-size: 2.2rem; margin-bottom: 10px; text-shadow: 0 0 20px #00ffff; letter-spacing: 2px; }
+.login-box p { opacity: 0.8; margin-bottom: 30px; font-size: 1.1rem; }
+.login-box input { width: 100%; padding: 15px; margin: 10px 0; background: rgba(10, 10, 15, 0.8); border: 1px solid #333; border-radius: 10px; color: white; font-size: 16px; }
+.login-box button { width: 100%; padding: 15px; margin-top: 20px; background: #00ffff; border: none; border-radius: 10px; color: #000; font-weight: bold; font-size: 16px; cursor: pointer; }
+.error { color: #ff4444; margin-top: 10px; display: none; }
+        #simulator { display: none; height: 100vh; }
+.header { background: rgba(10, 10, 15, 0.9); padding: 15px 30px; border-bottom: 1px solid #00ffff; display: flex; justify-content: space-between; }
+.header h2 { color: #00ffff; letter-spacing: 2px; }
+.main-grid { display: grid; grid-template-columns: 300px 1fr 300px; height: calc(100vh - 120px); }
+.sidebar { background: rgba(10, 10, 15, 0.8); padding: 15px; overflow-y: auto; border-right: 1px solid #333; }
+.sidebar h3 { color: #00ffff; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1rem; }
+.drone-card,.map-card { background: #1a1a2e; border: 1px solid #333; border-radius: 10px; padding: 12px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
+.drone-card:hover,.map-card:hover,.active { border-color: #00ffff; transform: translateX(5px); }
+.drone-card img,.map-card img { width: 100%; height: 80px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background: #fff; padding: 5px; }
+.map-card img { object-fit: cover; padding: 0; }
+.drone-card h4,.map-card h4 { color: #00ffff; margin-bottom: 6px; font-size: 0.95rem; }
+.spec { font-size: 0.8rem; opacity: 0.8; margin: 3px 0; }
+        #canvas { background: #1a1a2e; width: 100%; height: 100%; display: block; }
+.hud { position: absolute; top: 80px; left: 320px; right: 320px; display: flex; justify-content: space-between; pointer-events: none; gap: 10px; }
+.hud-item { background: rgba(0, 0, 0, 0.8); padding: 8px 15px; border-radius: 8px; border: 1px solid #00ffff; font-weight: bold; font-size: 0.9rem; }
+.controls { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
+.btn { padding: 12px 25px; background: #00ffff; color: #000; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; }
+.footer { position: fixed; bottom: 0; width: 100%; text-align: center; padding: 8px; background: rgba(10, 10, 15, 0.9); font-size: 0.8rem; border-top: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <div id="loginScreen">
+        <div class="login-box">
+            <h1>SPS FLIGHT ACADEMY</h1>
+            <p>Professional Drone Pilot Training</p>
+            <input type="text" id="username" placeholder="Pilot ID" value="Datta">
+            <input type="password" id="password" placeholder="Password" value="1234">
+            <button onclick="login()">ENTER SIMULATOR</button>
+            <div class="error" id="errorMsg">Invalid Pilot ID or Password</div>
+        </div>
+    </div>
+    <div id="simulator">
+        <div class="header">
+            <h2>SPS FLIGHT ACADEMY</h2>
+            <div>Welcome, <span id="pilotName">Pilot</span> | <a href="#" onclick="logout()" style="color:#ff4444;">Logout</a></div>
+        </div>
+        <div class="main-grid">
+            <div class="sidebar">
+                <h3>SELECT DRONE</h3>
+                <div class="drone-card active" onclick="selectDrone('sps1', this)">
+                    <img src="https://i.imgur.com/8QfVZ8u.jpeg" alt="SPS-1">
+                    <h4>SPS-1 SWIFT</h4>
+                    <div class="spec">⚖️ 250gm | ⚡ 100 km/h | 📡 5km</div>
+                </div>
+                <div class="drone-card" onclick="selectDrone('sps2', this)">
+                    <img src="https://i.imgur.com/27071527569139574.jpeg" alt="SPS-2">
+                    <h4>SPS-2 STABLE</h4>
+                    <div class="spec">⚖️ 500gm | ⚡ 80 km/h | 📡 10km</div>
+                </div>
+                <div class="drone-card" onclick="selectDrone('sps3', this)">
+                    <img src="https://i.imgur.com/KZx9q3m.jpeg" alt="SPS-3">
+                    <h4>SPS-3 TITAN</h4>
+                    <div class="spec">⚖️ 750gm | ⚡ 60 km/h | 📡 20km</div>
+                </div>
+            </div>
+            <div style="position: relative;">
+                <canvas id="canvas"></canvas>
+                <div class="hud">
+                    <div class="hud-item">ALT: <span id="alt">0</span>m</div>
+                    <div class="hud-item">SPD: <span id="spd">0</span>km/h</div>
+                    <div class="hud-item">BAT: <span id="bat">100</span>%</div>
+                    <div class="hud-item">MAP: <span id="mapName">DESERT</span></div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="takeoff()">TAKEOFF</button>
+                    <button class="btn" onclick="land()" style="background:#ff4444;">LAND</button>
+                </div>
+            </div>
+            <div class="sidebar">
+                <h3>SELECT TERRAIN</h3>
+                <div class="map-card active" onclick="selectMap('desert', this)">
+                    <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=400" alt="Desert">
+                    <h4>🏜️ DESERT</h4>
+                    <div class="spec">High winds | Medium</div>
+                </div>
+                <div class="map-card" onclick="selectMap('city', this)">
+                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400" alt="City">
+                    <h4>🌆 CITY NIGHT</h4>
+                    <div class="spec">Buildings | Hard</div>
+                </div>
+                <div class="map-card" onclick="selectMap('rainy', this)">
+                    <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=400" alt="Rainy">
+                    <h4>🌧️ RAINY STREET</h4>
+                    <div class="spec">Low visibility | Expert</div>
+                </div>
+                <h3 style="margin-top: 20px;">FLIGHT DATA</h3>
+                <div class="spec">Drone: <span id="currentDrone">SPS-1 SWIFT</span></div>
+                <div class="spec">Status: <span id="status">GROUNDED</span></div>
+                <div class="spec">Wind: <span id="wind">5</span> km/h</div>
+            </div>
+        </div>
+        <div class="footer">
+            SPS Flight Academy © 2026 | Powered by Saurabh Shingate | Lite v3.1
+        </div>
+    </div>
+    <script>
+        const VALID_USERS = { "Datta": "1234", "Pilot01": "fly2026", "Saurabh": "admin" };
+        let currentDrone = 'sps1';
+        let currentMap = 'desert';
+        let isFlying = false;
+        let altitude = 0, speed = 0, battery = 100;
+        const DRONES = {
+            sps1: { name: 'SPS-1 SWIFT', speed: 100, color: '#ffffff' },
+            sps2: { name: 'SPS-2 STABLE', speed: 80, color: '#ff6b35' },
+            sps3: { name: 'SPS-3 TITAN', speed: 60, color: '#4a4a4a' }
+        };
+        const MAP_COLORS = { desert: '#c19a6b', city: '#1a1a2e', rainy: '#0d2818' };
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if (VALID_USERS === pass) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('simulator').style.display = 'block';
+                document.getElementById('pilotName').textContent = user;
+                initCanvas();
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+        function logout() {
+            document.getElementById('simulator').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            isFlying = false; altitude = 0; speed = 0; battery = 100;
+        }
+        function selectDrone(drone, el) {
+            currentDrone = drone;
+            document.querySelectorAll('.drone-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('currentDrone').textContent = DRONES[drone].name;
+        }
+        function selectMap(map, el) {
+            currentMap = map;
+            document.querySelectorAll('.map-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('mapName').textContent = map.toUpperCase();
+            drawMap();
+        }
+        function takeoff() {
+            if (!isFlying) {
+                isFlying = true;
+                document.getElementById('status').textContent = 'AIRBORNE';
+                animateDrone();
+            }
+        }
+        function land() {
+            isFlying = false;
+            document.getElementById('status').textContent = 'LANDING...';
+            setTimeout(() => {
+                document.getElementById('status').textContent = 'GROUNDED';
+                altitude = 0; speed = 0;
+                updateHUD();
+            }, 1500);
+        }
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        function initCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            drawMap();
+        }
+        function drawMap() {
+            ctx.fillStyle = MAP_COLORS[currentMap];
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (currentMap === 'city') {
+                ctx.fillStyle = '#2c3e50';
+                for(let i = 0; i < 8; i++) {
+                    let h = 100 + Math.random()*150;
+                    ctx.fillRect(i * 120, canvas.height - h, 80, h);
+                }
+            } else if (currentMap === 'rainy') {
+                ctx.strokeStyle = 'rgba(174,194,224,0.5)';
+                for(let i = 0; i < 100; i++) {
+                    ctx.beginPath();
+                    let x = Math.random()*canvas.width;
+                    let y = Math.random()*canvas.height;
+                    ctx.moveTo(x, y); ctx.lineTo(x-2, y+15);
+                    ctx.stroke();
+                }
+            }
+        }
+        let droneX = 100;
+        function animateDrone() {
+            if (!isFlying) return;
+            drawMap();
+            let maxSpeed = DRONES[currentDrone].speed;
+            speed = Math.min(speed + 0.8, maxSpeed);
+            altitude += 0.8;
+            battery -= 0.05;
+            droneX += speed / 25;
+            if(droneX > canvas.width + 50) droneX = -50;
+            ctx.fillStyle = DRONES[currentDrone].color;
+            ctx.beginPath(); ctx.arc(droneX, canvas.height - 100 - altitude, 12, 0, Math.PI*2); ctx.fill();
+            updateHUD();
+            requestAnimationFrame(animateDrone);
+        }
+        function updateHUD() {
+            document.getElementById('alt').textContent = Math.floor(altitude);
+            document.getElementById('spd').textContent = Math.floor(speed);
+            document.getElementById('bat').textContent = Math.floor(battery);
+            document.getElementById('wind').textContent = Math.floor(5 + Math.random()*10);
+        }
+        window.addEventListener('resize', initCanvas);
+    </script>
+</body>
+</html>
