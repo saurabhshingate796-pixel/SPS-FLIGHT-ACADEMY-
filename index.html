@@ -1,40 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPS Flight Academy | Lite</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #0a0a0f; color: #fff; overflow: hidden; }
-        #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-.login-box { background: rgba(26, 26, 46, 0.95); border: 1px solid #00ffff; border-radius: 20px; padding: 40px; width: 90%; max-width: 420px; box-shadow: 0 0 40px rgba(0, 255, 255, 0.3); text-align: center; }
-.login-box h1 { color: #00ffff; font-size: 2.2rem; margin-bottom: 10px; text-shadow: 0 0 20px #00ffff; letter-spacing: 2px; }
-.login-box p { opacity: 0.8; margin-bottom: 30px; font-size: 1.1rem; }
-.login-box input { width: 100%; padding: 15px; margin: 10px 0; background: rgba(10, 10, 15, 0.8); border: 1px solid #333; border-radius: 10px; color: white; font-size: 16px; }
-.login-box button { width: 100%; padding: 15px; margin-top: 20px; background: #00ffff; border: none; border-radius: 10px; color: #000; font-weight: bold; font-size: 16px; cursor: pointer; }
-.error { color: #ff4444; margin-top: 10px; display: none; }
-        #simulator { display: none; height: 100vh; }
-.header { background: rgba(10, 10, 15, 0.9); padding: 15px 30px; border-bottom: 1px solid #00ffff; display: flex; justify-content: space-between; }
-.header h2 { color: #00ffff; letter-spacing: 2px; }
-.main-grid { display: grid; grid-template-columns: 300px 1fr 300px; height: calc(100vh - 120px); }
-.sidebar { background: rgba(10, 10, 15, 0.8); padding: 15px; overflow-y: auto; border-right: 1px solid #333; }
-.sidebar h3 { color: #00ffff; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1rem; }
-.drone-card,.map-card { background: #1a1a2e; border: 1px solid #333; border-radius: 10px; padding: 12px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
-.drone-card:hover,.map-card:hover,.active { border-color: #00ffff; transform: translateX(5px); }
-.drone-card img,.map-card img { width: 100%; height: 80px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background: #fff; padding: 5px; }
-.map-card img { object-fit: cover; padding: 0; }
-.drone-card h4,.map-card h4 { color: #00ffff; margin-bottom: 6px; font-size: 0.95rem; }
-.spec { font-size: 0.8rem; opacity: 0.8; margin: 3px 0; }
+
         #canvas { background: #1a1a2e; width: 100%; height: 100%; display: block; }
 .hud { position: absolute; top: 80px; left: 320px; right: 320px; display: flex; justify-content: space-between; pointer-events: none; gap: 10px; }
-.hud-item { background: rgba(0, 0, 0, 0.8); padding: 8px 15px; border-radius: 8px; border: 1px solid #00ffff; font-weight: bold; font-size: 0.9rem; }
-.controls { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
-.btn { padding: 12px 25px; background: #00ffff; color: #000; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; }
-.footer { position: fixed; bottom: 0; width: 100%; text-align: center; padding: 8px; background: rgba(10, 10, 15, 0.9); font-size: 0.8rem; border-top: 1px solid #333; }
-    </style>
-</head>
-<body>
+.hud-item { background: rgba(0, 0, 0, 0.8); padding: 8px 15px; border-radius: 8px; border: 1px 
     <div id="loginScreen">
         <div class="login-box">
             <h1>SPS FLIGHT ACADEMY</h1>
